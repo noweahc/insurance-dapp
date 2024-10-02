@@ -132,7 +132,7 @@ async function generateInsuranceContract() {
     };
 
     try {
-        const response = await fetch('http://127.0.0.1:5000/generate-contract', {
+        const response = await fetch('https://insurance-dapp.onrender.com', {  // Render 배포 URL로 변경
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -140,13 +140,19 @@ async function generateInsuranceContract() {
             body: JSON.stringify({ customer_data: customerData })
         });
 
+        if (!response.ok) {
+            throw new Error(`Server error: ${response.statusText}`);
+        }
+
         const data = await response.json();
         console.log('Generated Contract:', data.contract);
         document.getElementById('contractResult').innerText = data.contract;
     } catch (error) {
         console.error('Error generating contract:', error);
+        document.getElementById('contractResult').innerText = '계약서 생성 중 오류가 발생했습니다.';
     }
 }
+
 
 // 버튼 클릭 이벤트 연결
 document.getElementById('connectWallet').onclick = connectWallet;
