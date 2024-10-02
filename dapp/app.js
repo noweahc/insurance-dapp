@@ -91,35 +91,57 @@ const contractABI = [
 // MetaMask 연결 함수
 async function connectWallet() {
     if (typeof window.ethereum !== 'undefined') {
-        await ethereum.request({ method: 'eth_requestAccounts' });
-        provider = new ethers.providers.Web3Provider(window.ethereum);
-        signer = provider.getSigner();
-        contract = new ethers.Contract(contractAddress, contractABI, signer);
-        console.log('Wallet connected:', await signer.getAddress());
+        try {
+            await ethereum.request({ method: 'eth_requestAccounts' });
+            provider = new ethers.providers.Web3Provider(window.ethereum);
+            signer = provider.getSigner();
+            contract = new ethers.Contract(contractAddress, contractABI, signer);
+            console.log('Wallet connected:', await signer.getAddress());
+        } catch (error) {
+            console.error('Error connecting wallet:', error);
+            alert('지갑 연결 중 오류가 발생했습니다.');
+        }
     } else {
         console.log('MetaMask not found');
+        alert('MetaMask가 설치되어 있지 않습니다. 브라우저에 MetaMask를 설치해주세요.');
     }
 }
 
+
 // 보험 청구 승인 함수 호출
 async function approveClaim() {
+    if (!contract) {
+        alert('지갑을 먼저 연결해주세요.');
+        return;
+    }
+
     try {
         const tx = await contract.approveClaim();
         await tx.wait();
         console.log('Claim approved');
+        alert('보험 청구가 승인되었습니다.');
     } catch (error) {
-        console.log('Error approving claim:', error);
+        console.error('Error approving claim:', error);
+        alert('보험 청구 승인 중 오류가 발생했습니다.');
     }
 }
 
+
 // 보험금 지급 함수 호출
 async function executePayment() {
+    if (!contract) {
+        alert('지갑을 먼저 연결해주세요.');
+        return;
+    }
+
     try {
         const tx = await contract.executePayment({ value: ethers.utils.parseEther("0.1") });
         await tx.wait();
         console.log('Payment executed');
+        alert('보험금이 지급되었습니다.');
     } catch (error) {
-        console.log('Error executing payment:', error);
+        console.error('Error executing payment:', error);
+        alert('보험금 지급 중 오류가 발생했습니다.');
     }
 }
 
