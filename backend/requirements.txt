@@ -3,5 +3,3 @@ gunicorn==20.1.0
 transformers==4.30.0
 torch==2.0.1
 flask-cors==3.1.2
-# anaconda-clean 패키지가 필요하다면 PyPI에서 설치 가능 여부 확인
-# 가능하지 않다면 다른 방법 고려
